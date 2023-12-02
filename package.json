@@ -4,7 +4,7 @@
   "description": "server for podcast streaming application",
   "main": "index.js",
   "scripts": {
-    "dev": "tsnd --respawn --pretty --transpile-only ./src/index.ts"
+    "dev": "tsnd --respawn -r tsconfig-paths/register --pretty --transpile-only ./src/index.ts"
   },
   "keywords": [],
   "author": "Yassef Ayub Boggeano",
@@ -21,6 +21,7 @@
     "@types/mongoose": "^5.11.97",
     "@types/node": "^20.9.1",
     "ts-node-dev": "^2.0.0",
+    "tsconfig-paths": "^4.2.0",
     "typescript": "^5.2.2"
   }
 }
