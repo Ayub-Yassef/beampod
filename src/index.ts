@@ -1,16 +1,17 @@
-import express from 'express';
-import "dotenv/config";
-import "./db";
+import express from 'express'
+import "dotenv/config"
+import "./db"
 
-import authRouter from './routers/auth';
+import router from './routers/auth'
 
-const app = express();
+const app = express()
 
 //middleware registration
-app.use(express.json());
-app.use(express.urlencoded({extended: false}));
+app.use(express.json())
+app.use(express.urlencoded({extended: false}))
 
-app.use("/auth", authRouter);
+app.use("/auth", router)
+
 
 const PORT = process.env.PORT || 8989;
 
