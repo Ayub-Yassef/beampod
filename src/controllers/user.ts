@@ -5,6 +5,8 @@ import EmailVerificationToken from '#/models/emailVerificationTokens';
 import nodemailer from "nodemailer"
 import { MAILTRAP_PASS, MAILTRAP_USER } from "#/utils/variables";
 import { generateToken } from "#/utils/helper";
+import { generateTemplate } from "#/mail/template";
+import path from "path";
 
 export const create: RequestHandler = (async (req: CreateUser, res) => {
 const { email, password, name } = req.body;
@@ -28,10 +30,31 @@ const newToken = await EmailVerificationToken.create({
     token
 });
 
+const welcomeMessage = `Hello ${name}, welcome to Beampod! There are many more benefits for users that verify their accounts - use this OTP to verify yours.`
+
 transport.sendMail({
     to: user.email,
-    from: "auth@myapp.com",
-    html: `<h1>Your verification token is ${token}</h1>`,
+    from: "no-reply@beampod.com",
+    html: generateTemplate({
+        title: "Welcome to Beampod!",
+        message: welcomeMessage,
+        logo: "cid:logo",
+        banner: "cid:welcome",
+        link: "#",
+        btnTitle: token
+    }),
+    attachments: [
+        {
+            filename: "logo.png",
+            path: path.join(__dirname, "../mail/logo.png"),
+            cid: "logo"
+        },
+        {
+            filename: "welcome.png",
+            path: path.join(__dirname, "../mail/welcome.png"),
+            cid: "welcome"
+        }
+    ]
 });
 res.status(201).json({ user });
 });
