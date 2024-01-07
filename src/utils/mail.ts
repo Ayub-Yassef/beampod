@@ -1,7 +1,7 @@
 import User from '#/models/user';
 import EmailVerificationToken from '#/models/emailVerificationTokens';
 import nodemailer from "nodemailer"
-import { MAILTRAP_PASS, MAILTRAP_USER } from "#/utils/variables";
+import { MAILTRAP_PASS, MAILTRAP_USER, VERIFICATION_EMAIL } from "#/utils/variables";
 import { generateToken } from "#/utils/helper";
 import { generateTemplate } from "#/mail/template";
 import path from "path";
@@ -24,7 +24,7 @@ interface Profile {
     userId: string;
 }
 
-const sendVerificationMail = async (token: string, profile: Profile) => {
+export const sendVerificationMail = async (token: string, profile: Profile) => {
     const transport = generateMailTransporter()
 
     const {name, email, userId} = profile
@@ -38,7 +38,7 @@ const sendVerificationMail = async (token: string, profile: Profile) => {
     
     transport.sendMail({
         to: email,
-        from: "no-reply@beampod.com",
+        from: VERIFICATION_EMAIL,
         subject: "Verify your Beampod Account",
         html: generateTemplate({
             title: "Welcome to Beampod!",
