@@ -23,12 +23,12 @@ const { token, userId } = req.body;
 
 const verificationToken = await emailVerificationTokens.findOne({
     owner: userId
-})
+});
 
 if(!verificationToken) return res.status(403).json({error: "Invalid token!"})
 
 const matched = await verificationToken.compareToken(token)
-if(!verificationToken) return res.status(403).json({error: "Invalid token!"})
+if(!matched) return res.status(403).json({error: "Invalid token!"})
 
 await User.findByIdAndUpdate(userId, {
     verified: true

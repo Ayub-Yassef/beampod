@@ -3,7 +3,7 @@ import * as yup from "yup"
 
 export const validate = (schema: any): RequestHandler => {
     return async (req, res, next) => {
-        if(!req.body) return res.json({error: "Empty body is not accepted."});
+        if(!req.body) return res.status(422).json({error: "Empty field is not accepted."});
         const schemaToValidate = yup.object({
             body: schema,
         });
