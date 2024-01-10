@@ -4,6 +4,7 @@ import User from '#/models/user';
 import { sendVerificationMail } from "#/utils/mail";
 import { generateToken } from "#/utils/helper";
 import emailVerificationTokens from "#/models/emailVerificationTokens";
+import { isValidObjectId } from "mongoose";
 
 
 export const create: RequestHandler = async (req: CreateUser, res) => {
@@ -13,6 +14,11 @@ const user = await User.create({ name, email, password });
 
 //verification email dispatch
 const token = generateToken()
+await emailVerificationTokens.create({
+    owner: user._id,
+    token,
+})
+
 sendVerificationMail(token, {name, email, userId:user._id.toString() })
 
 res.status(201).json({ user: {id: user._id, name, email} });
@@ -36,4 +42,31 @@ await User.findByIdAndUpdate(userId, {
 await emailVerificationTokens.findByIdAndDelete(verificationToken._id)
 
 res.json({message: "Your email is verified."})
+};
+
+export const sendReVerificationToken: RequestHandler = async (req, res) => {
+const { userId } = req.body;
+
+if(!isValidObjectId(userId)) return res.status(403).json({error: "Invalid request!"})
+
+const user = await User.findById(userId)
+if(!user) return res.status(403).json({error: "Invalid request!"})
+
+await emailVerificationTokens.findOneAndDelete({
+    owner: userId
+})
+
+const token = generateToken()
+await emailVerificationTokens.create({
+    owner: userId,
+    token
+})
+
+sendVerificationMail(token, {
+    name: user?.name,
+    email: user?.email,
+    userId: user?._id.toString()
+})
+
+res.json({message: "Please check your inbox."})
 };

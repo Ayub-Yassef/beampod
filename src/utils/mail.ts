@@ -29,11 +29,6 @@ export const sendVerificationMail = async (token: string, profile: Profile) => {
 
     const {name, email, userId} = profile
     
-    await EmailVerificationToken.create({
-        owner: userId,
-        token,
-    });
-    
     const welcomeMessage = `Hello ${name}, welcome to Beampod! There are many more benefits for users that verify their accounts - use this OTP to verify yours.`
     
     transport.sendMail({

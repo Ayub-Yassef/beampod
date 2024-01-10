@@ -1,4 +1,4 @@
-import { create, verifyEmail } from '#/controllers/user';
+import { create, sendReVerificationToken, verifyEmail } from '#/controllers/user';
 import { validate } from '#/middleware/validator';
 import { CreateUserSchema, EmailVerificationBody } from '#/utils/validationSchema';
 import {Router} from 'express';
@@ -9,5 +9,6 @@ router.post(
     '/create', validate(CreateUserSchema),create);
 router.post(
     '/verify-email', validate(EmailVerificationBody), verifyEmail);
-
+router.post(
+    "/reverify-email", sendReVerificationToken)
 export default router;
