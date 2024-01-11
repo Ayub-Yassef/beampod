@@ -66,7 +66,7 @@ sendVerificationMail(token, {
     name: user?.name,
     email: user?.email,
     userId: user?._id.toString()
-})
+});
 
 res.json({message: "Please check your inbox."})
 };
