@@ -1,7 +1,7 @@
 import { CreateUser, VerifyEmailRequest } from "#/@types/user";
 import { RequestHandler } from "express";
 import User from '#/models/user';
-import { sendVerificationMail } from "#/utils/mail";
+import { sendForgotPasswordLink, sendVerificationMail } from "#/utils/mail";
 import { generateToken } from "#/utils/helper";
 import emailVerificationTokens from "#/models/emailVerificationTokens";
 import passwordResetToken from "#/models/passwordResetToken";
@@ -82,13 +82,19 @@ if(!user) return res.status(404).json({error: "Account not found!"})
 //generate link
 // https://yourapp.com/reset-password?token=dafdsagh214432df&userId=67fjksahf42
 
+await passwordResetToken.findOneAndDelete({
+    owner: user._id,
+})
 
 const token = crypto.randomBytes(36).toString('hex')
+
 await passwordResetToken.create({
     owner: user._id,
     token
 })
 const resetLink = `${PASSWORD_RESET_LINK}?token=${token}&userId=${user._id}`
 
-res.json({ resetLink });
+sendForgotPasswordLink({email: user.email, link: resetLink})
+
+res.json({ message: "We have sent password reset instructions to your registered email." });
 };

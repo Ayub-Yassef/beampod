@@ -57,3 +57,41 @@ export const sendVerificationMail = async (token: string, profile: Profile) => {
         ]
     });
 }
+
+interface Options {
+    email: string;
+    link: string;
+}
+
+export const sendForgotPasswordLink = async (options: Options) => {
+    const transport = generateMailTransporter()
+
+    const { email, link } = options;
+    
+    const message = `Hello ${name}, Please use the link below to reset your forgotten password. If you did not make this request, please get in touch so we may secure your account.`
+    transport.sendMail({
+        to: email,
+        from: VERIFICATION_EMAIL,
+        subject: "Password Reset",
+        html: generateTemplate({
+            title: "Forgotten Password",
+            message,
+            logo: "cid:logo",
+            banner: "cid:forgot_password",
+            link,
+            btnTitle: "Reset Password"
+        }),
+        attachments: [
+            {
+                filename: "logo.png",
+                path: path.join(__dirname, "../mail/logo.png"),
+                cid: "logo"
+            },
+            {
+                filename: "forgot_password.png",
+                path: path.join(__dirname, "../mail/forgot_password.png"),
+                cid: "forgot_password"
+            }
+        ]
+    });
+}
