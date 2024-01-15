@@ -84,7 +84,7 @@ if(!user) return res.status(404).json({error: "Account not found!"})
 
 await passwordResetToken.findOneAndDelete({
     owner: user._id,
-})
+});
 
 const token = crypto.randomBytes(36).toString('hex')
 
