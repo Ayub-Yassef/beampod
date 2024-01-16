@@ -68,7 +68,7 @@ export const sendForgotPasswordLink = async (options: Options) => {
 
     const { email, link } = options;
     
-    const message = `Hello ${name}, Please use the link below to reset your forgotten password. If you did not make this request, please get in touch so we may secure your account.`
+    const message = "Hello, Please use the link below to reset your forgotten password. If you did not make this request, please get in touch so we may secure your account."
     transport.sendMail({
         to: email,
         from: VERIFICATION_EMAIL,
@@ -88,8 +88,8 @@ export const sendForgotPasswordLink = async (options: Options) => {
                 cid: "logo"
             },
             {
-                filename: "forgot_password.png",
-                path: path.join(__dirname, "../mail/forgot_password.png"),
+                filename: "forgotPassword.png",
+                path: path.join(__dirname, "../mail/forgotPassword.png"),
                 cid: "forgot_password"
             }
         ]
