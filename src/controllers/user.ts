@@ -98,3 +98,7 @@ sendForgotPasswordLink({email: user.email, link: resetLink})
 
 res.json({ message: "We have sent password reset instructions to your registered email." });
 };
+export const grantValid: RequestHandler = async (req, res) => {
+res.json({valid: true})
+
+};
