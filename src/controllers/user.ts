@@ -1,7 +1,7 @@
 import { CreateUser, VerifyEmailRequest } from "#/@types/user";
 import { RequestHandler } from "express";
 import User from '#/models/user';
-import { sendForgotPasswordLink, sendVerificationMail } from "#/utils/mail";
+import { sendForgotPasswordLink, sendPassResetSuccessEmail, sendVerificationMail } from "#/utils/mail";
 import { generateToken } from "#/utils/helper";
 import emailVerificationTokens from "#/models/emailVerificationTokens";
 import passwordResetToken from "#/models/passwordResetToken";
@@ -100,5 +100,24 @@ res.json({ message: "We have sent password reset instructions to your registered
 };
 export const grantValid: RequestHandler = async (req, res) => {
 res.json({valid: true})
+
+};
+export const updatePassword: RequestHandler = async (req, res) => {
+const {password, userId} = req.body
+
+const user = await User.findById(userId)
+if(!user) return res.status(403).json({error: "Unauthorised access!"})
+
+const matched = await user.comparePassword(password)
+if(matched) return res.status(422).json({error: "The new password must be different from previous passwords."})
+
+user.password = password
+await user.save()
+
+await passwordResetToken.findOneAndDelete({owner: user._id});
+// successful password change email dispatch
+
+sendPassResetSuccessEmail(user.name, user.email)
+res.json({message: "Password reset successful."})
 
 };

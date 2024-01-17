@@ -1,7 +1,7 @@
 import User from '#/models/user';
 import EmailVerificationToken from '#/models/emailVerificationTokens';
 import nodemailer from "nodemailer"
-import { MAILTRAP_PASS, MAILTRAP_USER, VERIFICATION_EMAIL } from "#/utils/variables";
+import { MAILTRAP_PASS, MAILTRAP_USER, SIGN_IN_URL, VERIFICATION_EMAIL } from "#/utils/variables";
 import { generateToken } from "#/utils/helper";
 import { generateTemplate } from "#/mail/template";
 import path from "path";
@@ -79,6 +79,36 @@ export const sendForgotPasswordLink = async (options: Options) => {
             logo: "cid:logo",
             banner: "cid:forgot_password",
             link,
+            btnTitle: "Reset Password"
+        }),
+        attachments: [
+            {
+                filename: "logo.png",
+                path: path.join(__dirname, "../mail/logo.png"),
+                cid: "logo"
+            },
+            {
+                filename: "forgotPassword.png",
+                path: path.join(__dirname, "../mail/forgotPassword.png"),
+                cid: "forgot_password"
+            }
+        ]
+    });
+}
+export const sendPassResetSuccessEmail = async (name: string, email: string) => {
+    const transport = generateMailTransporter()
+    
+    const message = `Dear ${name}, We just updated your password successfully.`
+    transport.sendMail({
+        to: email,
+        from: VERIFICATION_EMAIL,
+        subject: "New Password Updated",
+        html: generateTemplate({
+            title: "New Password Updated",
+            message,
+            logo: "cid:logo",
+            banner: "cid:forgot_password",
+            link: SIGN_IN_URL,
             btnTitle: "Reset Password"
         }),
         attachments: [
