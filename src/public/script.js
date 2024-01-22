@@ -9,9 +9,14 @@ const container = getById('container')
 const loader = getById('loader')
 const button = getById('submit')
 const error = getById("error");
-const success = document.getElementById("success");
+const success = getById("success");
+
+error.style.display = "none";
+success.style.display = "none";
+container.style.display = "none";
 
 let token, userId;
+const passRegex = /^(?=.*[a-zA-Z])(?=.*\d)(?=.*[!@#\$%\^&\*])[a-zA-Z\d!@#\$%\^&\*]+$/;
 
 window.addEventListener('DOMContentLoaded', async () => {
     const params = new Proxy(new URLSearchParams(window.location.search), {
@@ -22,16 +27,16 @@ window.addEventListener('DOMContentLoaded', async () => {
 token = params.token
 userId = params.userId
 
-const res = await fetch("/auth/verify-pass-reset-token",
-{
-    method: 'POST',
+
+const res = await fetch("/auth/verify-pass-reset-token", {
+    method: "POST",
     headers: {
         "Content-Type": "application/json;charset=utf-8",
     },
     body: JSON.stringify({
-        token, userId
-    })
-})
+        token, userId,
+    }),
+});
 
 if(!res.ok){
     const { error } = await res.json()
@@ -43,5 +48,56 @@ loader.style.display = "none";
 container.style.display = "block"
 
 });
-error.style.display = "none";
-success.style.display = "none";
+
+const displayError = (errorMessage) => {
+    //remove if success message returned
+    success.style.display = "none";
+    error.innerText = errorMessage;
+    error.style.display = "block";
+}
+const displaySuccess = (successMessage) => {
+    //remove if error message returned
+    error.style.display = "none";
+    error.innerText = successMessage;
+    success.style.display = "block";
+}
+
+const handleSubmit = async(evt) => {
+    evt.preventDefault();
+    if(!password.value.trim()){
+        return displayError("Password missing!");
+    }
+    if(!passRegex.test(password.value)){
+        return displayError("Password is too simple; use combination of letters, numbers and special characters.");
+    }
+    if(password.value !== confirmPassword.value){
+        return displayError("Confirm Password does not match.");
+    }
+
+button.disabled = true;
+button.innerText = "Please wait...";
+
+const res = await fetch("/auth/update-password",
+{
+    method: 'POST',
+    headers: {
+        "Content-Type": "application/json;charset=utf-8",
+    },
+    body: JSON.stringify({
+        token, userId, password: password.value,
+    }),
+});
+button.disabled = false;
+button.innerText = "Reset Password";
+
+if(!res.ok){
+    const { error } = await res.json();
+    return displayError(error);
+}
+
+displaySuccess("Your password has been reset successfully.");
+password.value ="";
+confirmPassword.value = "";
+};
+
+form.addEventListener('submit', handleSubmit);

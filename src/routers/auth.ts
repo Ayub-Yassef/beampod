@@ -2,7 +2,7 @@ import { create, generateForgotPasswordLink, grantValid, sendReVerificationToken
 import { isValidPassResetToken } from '#/middleware/auth';
 import { validate } from '#/middleware/validator';
 import { CreateUserSchema, TokenAndIdValidation, UpdatePasswordSchema } from '#/utils/validationSchema';
-import {Router} from 'express';
+import { Router } from 'express';
 
 const router = Router();
 
