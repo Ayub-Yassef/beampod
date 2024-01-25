@@ -26,3 +26,8 @@ export const UpdatePasswordSchema = yup.object().shape({
     }).required("Invalid userId!"),
     password: yup.string().trim().required("Password is missing.").min(8, "Password is too short.").matches(/^(?=.*[a-zA-Z])(?=.*\d)(?=.*[!@#\$%\^&\*])[a-zA-Z\d!@#\$%\^&\*]+$/, "Password requires 8 characters including upper and lower case letters, at least one number and a special character.")
 })
+
+export const SignInValidationSchema = yup.object().shape({
+    email: yup.string().required("Email is missing.").email("Invalid email id."),
+    password: yup.string().trim().required("Password is missing.")
+})
