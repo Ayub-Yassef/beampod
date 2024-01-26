@@ -10,19 +10,17 @@ import crypto from 'crypto';
 import { JWT_SECRET, PASSWORD_RESET_LINK } from "#/utils/variables";
 import jwt from 'jsonwebtoken'
 
-
-
 export const create: RequestHandler = async (req: CreateUser, res) => {
 const { email, password, name } = req.body;
 
 const user = await User.create({ name, email, password });
 
 //verification email dispatch
-const token = generateToken()
+const token = generateToken();
 await emailVerificationTokens.create({
     owner: user._id,
     token,
-})
+});
 
 sendVerificationMail(token, {name, email, userId:user._id.toString() })
 
@@ -124,21 +122,21 @@ res.json({message: "Password reset successful."})
 
 };
 export const signIn: RequestHandler = async (req, res) => {
-const {password, email} = req.body
+const { password, email } = req.body;
 const user = await User.findOne({
-    email
-})
-if(!user) return res.status(403).json({error: "Email/Password mismatch."})
+    email,
+});
+if(!user) return res.status(403).json({error: "Email/Password mismatch :D ."});
 
 //compare the password here
-const matched = await user.comparePassword(password)
-if(!matched) return res.status(403).json({error: "Email/Password mismatch."})
+const matched = await user.comparePassword(password);
+if(!matched) return res.status(403).json({error: "Email/Password mismatch :P."});
 
 //generate the token here for later use
-const token = jwt.sign({userId: user._id}, JWT_SECRET)
-user.tokens.push(token)
+const token = jwt.sign({userId: user._id}, JWT_SECRET);
+user.tokens.push(token);
 
-await user.save()
+await user.save();
 
 res.json({
     profile: {
@@ -150,6 +148,6 @@ res.json({
         followers: user.followers.length,
         following: user.following.length,
     },
-token
+token,
 });
 };
