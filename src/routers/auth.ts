@@ -1,4 +1,4 @@
-import { create, generateForgotPasswordLink, grantValid, sendReVerificationToken, signIn, updatePassword, verifyEmail } from '#/controllers/user';
+import { create, generateForgotPasswordLink, grantValid, sendReVerificationToken, signIn, updatePassword, updateProfile, verifyEmail } from '#/controllers/user';
 import { isValidPassResetToken, mustAuth } from '#/middleware/auth';
 import { validate } from '#/middleware/validator';
 import { CreateUserSchema, SignInValidationSchema, TokenAndIdValidation, UpdatePasswordSchema } from '#/utils/validationSchema';
@@ -37,9 +37,6 @@ router.get('/private', mustAuth, (req, res) => {
     });
 });
 
-router.post("/update-profile", fileParser, (req: RequestWithFiles, res) => {
-    console.log(req.files);
-    res.json({ok: true});
-});
+router.post("/update-profile", mustAuth, fileParser, updateProfile);
 
 export default router;
