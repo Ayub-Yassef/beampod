@@ -1,4 +1,4 @@
-import { create, generateForgotPasswordLink, grantValid, sendReVerificationToken, signIn, updatePassword, updateProfile, verifyEmail } from '#/controllers/user';
+import { create, generateForgotPasswordLink, grantValid, sendProfile, sendReVerificationToken, signIn, updatePassword, updateProfile, verifyEmail } from '#/controllers/user';
 import { isValidPassResetToken, mustAuth } from '#/middleware/auth';
 import { validate } from '#/middleware/validator';
 import { CreateUserSchema, SignInValidationSchema, TokenAndIdValidation, UpdatePasswordSchema } from '#/utils/validationSchema';
@@ -21,11 +21,8 @@ router.post(
     '/update-password', validate(UpdatePasswordSchema), isValidPassResetToken, updatePassword)
 router.post(
     '/sign-in', validate(SignInValidationSchema), signIn)
-router.get('/is-auth', mustAuth, (req, res) => {
-    res.json({
-        profile: req.user,
-    });
-});
+router.get('/is-auth', mustAuth, sendProfile);
+
 router.get('/public', (req, res) => {
     res.json({
         message: "ATTENTION! You are using a PUBLIC route.",

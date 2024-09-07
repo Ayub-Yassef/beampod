@@ -184,3 +184,7 @@ export const updateProfile: RequestHandler = async (req: RequestWithFiles, res) 
 
     req.user.id
 };
+
+export const sendProfile: RequestHandler = (req, res) => {
+    res.json({ profile: req.user });
+}
